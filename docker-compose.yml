@@ -1,15 +1,20 @@
 version: '3'
 services:
-  algamoney-api:
-    build: ../algamoney-api-server
-    ports:
-      - "8080:8080"
-    depends_on:
-    - "algamoney-db"
-    command: ["./wait-for-it.sh", "algamoney-db:5432"]
   algamoney-db:
     build: ../algamoney-db
     environment:
       - "POSTGRES_PASSWORD=TR!c0lor"
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "su", "postgres", "-c", "psql -h localhost -p 5432 -q"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  algamoney-api:
+    build: ../algamoney-api-server
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+    - "algamoney-db"
