@@ -5,7 +5,7 @@ services:
     environment:
       - "POSTGRES_PASSWORD=TR!c0lor"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
       test: ["CMD", "su", "postgres", "-c", "psql -h localhost -p 5432 -q"]
       interval: 30s
