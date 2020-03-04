@@ -41,7 +41,7 @@ services:
       - backend-infra
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:3000"]
-      interval: 30s
+      interval: 1m30s
       timeout: 10s
       retries: 5
   rundeck:
@@ -57,7 +57,7 @@ services:
     - "grafana"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:4440"]
-      interval: 30s
+      interval: 1m30s
       timeout: 10s
       retries: 5
 
