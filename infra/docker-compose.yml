@@ -66,5 +66,3 @@ networks:
     driver: bridge
   backend-api:
     driver: bridge
-  frontend:
-    driver: bridge
