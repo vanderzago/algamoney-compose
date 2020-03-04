@@ -44,6 +44,22 @@ services:
       interval: 1m30s
       timeout: 10s
       retries: 5
+  rundeck:
+    image: rundeck/rundeck:SNAPSHOT
+    ports:
+      - "4440:4440"
+    environment: 
+      - "RUNDECK_GRAILS_URL=http://localhost:4440"
+    networks:
+      - backend-infra
+    depends_on: 
+    - "graylog"
+    - "grafana"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4440"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
 
 networks:
   backend-infra:
