@@ -1,0 +1,68 @@
+version: '3.7'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - backend-infra
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "http.host=0.0.0.0"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - backend-infra
+  graylog:
+    image: graylog/graylog:3.2
+    ports:
+      - "9000:9000"
+      - "1514:1514"
+      - "1514:1514/udp"
+      - "12201:12201"
+      - "12201:12201/udp"
+    environment:
+      - "GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/"
+    restart: on-failure
+    networks:
+      - backend-infra
+      - backend-api
+    depends_on:
+    - "mongo"
+    - "elasticsearch"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - backend-infra
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  rundeck:
+    image: rundeck/rundeck:SNAPSHOT
+    ports:
+      - "4440:4440"
+    environment: 
+      - "RUNDECK_GRAILS_URL=http://localhost:4440"
+    networks:
+      - backend-infra
+    depends_on: 
+    - "graylog"
+    - "grafana"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4440"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  backend-infra:
+    driver: bridge
+  backend-api:
+    driver: bridge

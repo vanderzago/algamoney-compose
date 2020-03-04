@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  algamoney-db:
+    build: ../../algamoney-db
+    environment:
+      - "POSTGRES_PASSWORD=TR!c0lor"
+    ports:
+      - "5433:5432"
+    networks:
+      - infra_backend-api
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  algamoney-api:
+    build: ../../algamoney-api-server
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    restart: on-failure
+    networks:
+      - infra_backend-api
+    depends_on:
+    - "algamoney-db"
+    healthcheck:
+      test: ["CMD", "/opt/healthcheck.sh","vanderzago@gmail.com","admin","YW5ndWxhcjpAbmd1bEByMA=="]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  algamoney-ui:
+    build: ../../algamoney-ui-server
+    ports:
+      - "8000:8000"
+    networks:
+        - frontend
+    depends_on:
+    - "algamoney-api"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+ 
+networks:
+  frontend:
+    driver: bridge
+  infra_backend-api:
+    external: true
