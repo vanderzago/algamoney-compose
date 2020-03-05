@@ -3,7 +3,7 @@ services:
   algamoney-db:
     build: ../../algamoney-db
     environment:
-      - "POSTGRES_PASSWORD=TR!c0lor"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
     ports:
       - "5433:5432"
     networks:
@@ -15,6 +15,11 @@ services:
       retries: 5
   algamoney-api:
     build: ../../algamoney-api-server
+    environment:
+        - "USER=${GRAYLOG_USER}"
+        - "PASS=${GRAYLOG_PASS}"
+        - "URL=${GRAYLOG_URL}"
+        - "FRONT_URL=${FRONT_URL}"
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -24,7 +29,7 @@ services:
     depends_on:
     - "algamoney-db"
     healthcheck:
-      test: ["CMD", "/opt/healthcheck.sh","vanderzago@gmail.com","admin","YW5ndWxhcjpAbmd1bEByMA=="]
+      test: ["CMD", "/opt/healthcheck.sh","${API_USER}","${API_PASS}","${API_BASIC_AUTH}","${API_URL}"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -37,7 +42,7 @@ services:
     depends_on:
     - "algamoney-api"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8000"]
+      test: ["CMD", "curl", "--fail", "${FRONT_URL}"]
       interval: 30s
       timeout: 10s
       retries: 5
