@@ -9,3 +9,7 @@ docker-compose logs -f
 docker-compose stop
 docker-compose down
 docker-compose down --volumes
+docker-compose config (ver o q sera applicado)
+
+docker stats (ver consumo de infra dos containeres)
+

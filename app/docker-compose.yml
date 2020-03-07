@@ -16,9 +16,6 @@ services:
   algamoney-api:
     build: ../../algamoney-api-server
     environment:
-        - "USER=${GRAYLOG_USER}"
-        - "PASS=${GRAYLOG_PASS}"
-        - "URL=${GRAYLOG_URL}"
         - "FRONT_URL=${FRONT_URL}"
     ports:
       - "8080:8080"

@@ -25,7 +25,7 @@ services:
       - "12201:12201"
       - "12201:12201/udp"
     environment:
-      - "GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_URL}"
+      - "GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_EXTERNAL_URL}"
     restart: on-failure
     networks:
       - backend-infra
@@ -41,10 +41,34 @@ services:
       - backend-infra
     healthcheck:
       test: ["CMD", "curl", "--fail", "${GRAFANA_URL}"]
-      interval: 1m30s
+      interval: 90s
       timeout: 10s
       retries: 5
-
+  rundeck:
+    build: ../../algamoney-rundeck
+    environment:
+        - "USER=${RUNDECK_USER}"
+        - "PASS=${RUNDECK_PASS}"
+        - "URL=${RUNDECK_URL}"
+        - "GRAYLOG_BASIC_AUTH=${GRAYLOG_BASIC_AUTH}"
+        - "GRAYLOG_URL=${GRAYLOG_URL}"
+        - "GRAFANA_BASIC_AUTH=${GRAFANA_BASIC_AUTH}"
+        - "GRAFANA_URL=${GRAFANA_URL}"
+        - "ELASTICSEARCH_URL=${ELASTICSEARCH_URL}"
+    ports:
+      - "4440:4440"
+    environment: 
+      - "RUNDECK_GRAILS_URL=${RUNDECK_URL}"
+    networks:
+      - backend-infra
+    depends_on: 
+    - "graylog"
+    - "grafana"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "${RUNDECK_URL}"]
+      interval: 90s
+      timeout: 10s
+      retries: 5
 networks:
   backend-infra:
     driver: bridge
