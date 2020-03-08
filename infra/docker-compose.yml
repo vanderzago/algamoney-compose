@@ -17,7 +17,7 @@ services:
     networks:
       - backend-infra
   graylog:
-    image: graylog/graylog:3.2 
+    build: ../../algamoney-graylog 
     ports:
       - "9000:9000"
       - "1514:1514"
@@ -34,7 +34,7 @@ services:
     - "mongo"
     - "elasticsearch"
   grafana:
-    image: grafana/grafana
+    build: ../../algamoney-grafana
     ports:
       - "3000:3000"
     networks:
@@ -44,31 +44,7 @@ services:
       interval: 90s
       timeout: 10s
       retries: 5
-  rundeck:
-    build: ../../algamoney-rundeck
-    environment:
-        - "USER=${RUNDECK_USER}"
-        - "PASS=${RUNDECK_PASS}"
-        - "URL=${RUNDECK_URL}"
-        - "GRAYLOG_BASIC_AUTH=${GRAYLOG_BASIC_AUTH}"
-        - "GRAYLOG_URL=${GRAYLOG_URL}"
-        - "GRAFANA_BASIC_AUTH=${GRAFANA_BASIC_AUTH}"
-        - "GRAFANA_URL=${GRAFANA_URL}"
-        - "ELASTICSEARCH_URL=${ELASTICSEARCH_URL}"
-    ports:
-      - "4440:4440"
-    environment: 
-      - "RUNDECK_GRAILS_URL=${RUNDECK_URL}"
-    networks:
-      - backend-infra
-    depends_on: 
-    - "graylog"
-    - "grafana"
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "${RUNDECK_URL}"]
-      interval: 90s
-      timeout: 10s
-      retries: 5
+
 networks:
   backend-infra:
     driver: bridge
