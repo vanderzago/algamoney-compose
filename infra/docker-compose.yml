@@ -1,13 +1,13 @@
 version: '3.7'
 services:
   mongo:
-    image: mongo
+    build: ../../algamoney-mongodb
     ports:
       - "27017:27017"
     networks:
       - backend-infra
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
+    build: ../../algamoney-elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
